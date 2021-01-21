@@ -10,8 +10,10 @@ Fill `config.py`
 ## Features
 
 * Create a new user
-* List all users
 * Delete users
+* List all rooms
+* List all users
+
 
 ## Usage
 

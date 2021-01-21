@@ -5,6 +5,7 @@ HEADERS = {'Authorization': f'Bearer {config.TOKEN}'}
 
 ENDPOINTS = {
     'DEACTIVATE': '/admin/v1/deactivate/',
+    'ROOMS': '/admin/v1/rooms',
     'USER_ADMIN': '/admin/v2/users'
 }
 
@@ -67,6 +68,15 @@ def menu_deactivate_users():
     main()
 
 
+def menu_list_all_rooms():
+    url = config.MATRIX_URL + ENDPOINTS['ROOMS']
+
+    r = requests.get(url, headers=HEADERS)
+    rooms = r.json()['rooms']
+    for room in rooms:
+        print(room)
+
+
 def menu_list_all_users():
     users = get_all_users()
     for user in users:
@@ -79,7 +89,8 @@ def menu_list_all_users():
 NAVIGATION = {
     1: menu_create_user,
     2: menu_list_all_users,
-    3: menu_deactivate_users
+    3: menu_deactivate_users,
+    4: menu_list_all_rooms
 }
 
 
@@ -87,6 +98,7 @@ def main():
     print('(1) Create a new user')
     print('(2) List all users')
     print('(3) Delete users')
+    print('(4) List all rooms')
     choice = int(input('Choose: '))
     NAVIGATION[choice]()
 
