@@ -11,6 +11,7 @@ Fill `config.py`
 
 * Create a new user
 * List all users
+* Delete users
 
 ## Usage
 
