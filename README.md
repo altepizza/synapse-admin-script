@@ -10,6 +10,7 @@ Fill `config.py`
 ## Features
 
 * Create a new user
+* List all users
 
 ## Usage
 
