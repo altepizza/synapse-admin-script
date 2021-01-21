@@ -1,0 +1,3 @@
+MATRIX_URL = 'https://example.com/_synapse/'
+URI = 'example.com'
+TOKEN = ''
