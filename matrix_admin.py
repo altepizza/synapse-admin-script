@@ -1,10 +1,13 @@
 import config
+import random
 import requests
+import string
 
 HEADERS = {'Authorization': f'Bearer {config.TOKEN}'}
 
 ENDPOINTS = {
     'DEACTIVATE': '/admin/v1/deactivate/',
+    'RESET_PASSWORD': 'admin/v1/reset_password/',
     'ROOMS': '/admin/v1/rooms',
     'USER_ADMIN': '/admin/v2/users'
 }
@@ -17,12 +20,30 @@ def deactivate_user(user_id, erase=True):
     requests.post(url, headers=HEADERS, json=payload)
 
 
+def generate_password(length=16):
+    LETTERS = string.ascii_letters
+    NUMBERS = string.digits
+    PUNCTUATION = string.punctuation
+    printable = f'{LETTERS}{NUMBERS}{PUNCTUATION}'
+    return ''.join((random.choice(printable) for i in range(length)))
+
+
 def get_all_users():
     url = config.MATRIX_URL + ENDPOINTS['USER_ADMIN']
 
     r = requests.get(url, headers=HEADERS)
     users = r.json()['users']
     return users
+
+
+def reset_password_for(user_id, password, logout_devices=False):
+    print('UNTESTED')
+    url = config.MATRIX_URL + ENDPOINTS['RESET_PASSWORD'] + user_id
+    payload = {
+        "new_password": password,
+        "logout_devices": logout_devices
+    }
+    requests.post(url, headers=HEADERS, json=payload)
 
 
 def menu_create_user():
@@ -86,11 +107,33 @@ def menu_list_all_users():
     main()
 
 
+def menu_reset_user_password():
+    password = generate_password()
+    print()
+    users = get_all_users()
+    for idx, user in enumerate(users):
+        print(f'({idx}) {user["name"]}')
+    print()
+    idx = int(input('Choose a number: '))
+    logout_devices = input('Logout all devices [y/N]?')
+    user_id = users[idx]['name']
+    tmp_password = input(f'Password [{password}]: ')
+    if logout_devices.lower() == 'y':
+        reset_password_for(user_id, password, logout_devices=True)
+        pass
+    else:
+        reset_password_for(user_id, password, logout_devices=False)
+        pass
+    main()
+    pass
+
+
 NAVIGATION = {
     1: menu_create_user,
     2: menu_list_all_users,
     3: menu_deactivate_users,
-    4: menu_list_all_rooms
+    4: menu_list_all_rooms,
+    5: menu_reset_user_password
 }
 
 
@@ -99,6 +142,7 @@ def main():
     print('(2) List all users')
     print('(3) Delete users')
     print('(4) List all rooms')
+    print('(5) Reset user password')
     choice = int(input('Choose: '))
     NAVIGATION[choice]()
 

@@ -13,6 +13,7 @@ Fill `config.py`
 * Delete users
 * List all rooms
 * List all users
+* Reset password for a user
 
 
 ## Usage
