@@ -7,7 +7,7 @@ HEADERS = {'Authorization': f'Bearer {config.TOKEN}'}
 
 ENDPOINTS = {
     'DEACTIVATE': '/admin/v1/deactivate/',
-    'RESET_PASSWORD': 'admin/v1/reset_password/',
+    'RESET_PASSWORD': '/admin/v1/reset_password/',
     'ROOMS': '/admin/v1/rooms',
     'USER_ADMIN': '/admin/v2/users'
 }
