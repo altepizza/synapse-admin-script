@@ -1,11 +1,17 @@
 # Synapse Admin Script
 
 ## Setup
-`pip3 install -r requirements.txt`
-
-`cp config.py.example config.py`
+```bash
+pipenv install
+pipenv shell
+cp config.py.example config.py
+```
 
 Fill `config.py`
+
+## Usage
+
+`python matrix_admin.py`
 
 ## Features
 
@@ -16,6 +22,3 @@ Fill `config.py`
 * Reset password for a user
 
 
-## Usage
-
-`python3 matrix_admin.py`
