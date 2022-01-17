@@ -2,6 +2,7 @@ import config
 import random
 import requests
 import string
+from loguru import logger
 
 HEADERS = {'Authorization': f'Bearer {config.TOKEN}'}
 
@@ -39,10 +40,7 @@ def get_all_users():
 def reset_password_for(user_id, password, logout_devices=False):
     print('UNTESTED')
     url = config.MATRIX_URL + ENDPOINTS['RESET_PASSWORD'] + user_id
-    payload = {
-        "new_password": password,
-        "logout_devices": logout_devices
-    }
+    payload = {"new_password": password, "logout_devices": logout_devices}
     requests.post(url, headers=HEADERS, json=payload)
 
 
@@ -95,7 +93,7 @@ def menu_list_all_rooms():
     r = requests.get(url, headers=HEADERS)
     rooms = r.json()['rooms']
     for room in rooms:
-        print(room)
+        logger.info(room)
 
 
 def menu_list_all_users():
@@ -117,7 +115,7 @@ def menu_reset_user_password():
     idx = int(input('Choose a number: '))
     logout_devices = input('Logout all devices [y/N]?')
     user_id = users[idx]['name']
-    tmp_password = input(f'Password [{password}]: ')
+    logger.info(f'New password: {password}')
     if logout_devices.lower() == 'y':
         reset_password_for(user_id, password, logout_devices=True)
         pass

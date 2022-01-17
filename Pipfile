@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+requests = "*"
+loguru = "*"
+
+[dev-packages]
+pytest = "*"
+flake8 = "*"
+yapf = "*"
+
+[requires]
+python_version = "3.9"
