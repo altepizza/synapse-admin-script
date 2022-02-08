@@ -2,6 +2,7 @@ import config
 import random
 import requests
 import string
+import time
 from loguru import logger
 
 HEADERS = {'Authorization': f'Bearer {config.TOKEN}'}
@@ -10,8 +11,22 @@ ENDPOINTS = {
     'DEACTIVATE': '/admin/v1/deactivate/',
     'RESET_PASSWORD': '/admin/v1/reset_password/',
     'ROOMS': '/admin/v1/rooms',
-    'USER_ADMIN': '/admin/v2/users'
+    'USER_ADMIN': '/admin/v2/users',
+    'USER_REGISTER': '/admin/v1/register',
+    'DELETE_LOCAL_MEDIA':
+    '/admin/v1/media/stein.altepizza.de/delete?before_ts='
 }
+
+YEAR_IN_MS = 31536000000
+
+
+def delete_local_media():
+    today_last_year = round(time.time() * 1000) - YEAR_IN_MS
+
+    url = config.MATRIX_URL + ENDPOINTS['DELETE_LOCAL_MEDIA'] + str(
+        today_last_year)
+    r = requests.post(url, headers=HEADERS)
+    logger.info(r.json())
 
 
 def deactivate_user(user_id, erase=True):
@@ -47,9 +62,12 @@ def reset_password_for(user_id, password, logout_devices=False):
 def menu_create_user():
     username = input('Username: ')
     password = input('Password: ')
+    if not password:
+        password = generate_password()
+        logger.info(password)
     display_name = input('Display Name: ')
     full_username = f'@{username}:{config.URI}'
-    url = config.MATRIX_URL + '/' + ENDPOINTS['USER_ADMIN'] + full_username
+    url = config.MATRIX_URL + ENDPOINTS['USER_ADMIN'] + '/' + full_username
     payload = {
         'password': password,
         'displayname': display_name,
@@ -59,11 +77,13 @@ def menu_create_user():
 
     r = requests.put(url, headers=HEADERS, json=payload)
     if r.status_code >= 200 and r.status_code < 300:
-        print('Success!')
+        logger.info('Success!')
         main()
     else:
-        print(r)
-        r.text
+        logger.error(f'url {url}')
+        logger.error(payload)
+        logger.error(r)
+        logger.error(r.text)
 
 
 def menu_deactivate_users():
@@ -123,7 +143,11 @@ def menu_reset_user_password():
         reset_password_for(user_id, password, logout_devices=False)
         pass
     main()
-    pass
+
+
+def menu_delete_local_media():
+    delete_local_media()
+    main()
 
 
 NAVIGATION = {
@@ -131,7 +155,8 @@ NAVIGATION = {
     2: menu_list_all_users,
     3: menu_deactivate_users,
     4: menu_list_all_rooms,
-    5: menu_reset_user_password
+    5: menu_reset_user_password,
+    6: menu_delete_local_media
 }
 
 
@@ -141,6 +166,7 @@ def main():
     print('(3) Delete users')
     print('(4) List all rooms')
     print('(5) Reset user password')
+    print('(6) Delete local media of the past year')
     choice = int(input('Choose: '))
     NAVIGATION[choice]()
 
