@@ -14,7 +14,8 @@ ENDPOINTS = {
     'USER_ADMIN': '/admin/v2/users',
     'USER_REGISTER': '/admin/v1/register',
     'DELETE_LOCAL_MEDIA':
-    '/admin/v1/media/stein.altepizza.de/delete?before_ts='
+    '/admin/v1/media/stein.altepizza.de/delete?before_ts=',
+    'GET_VERSION': '/admin/v1/server_version'
 }
 
 YEAR_IN_MS = 31536000000
@@ -53,7 +54,6 @@ def get_all_users():
 
 
 def reset_password_for(user_id, password, logout_devices=False):
-    print('UNTESTED')
     url = config.MATRIX_URL + ENDPOINTS['RESET_PASSWORD'] + user_id
     payload = {"new_password": password, "logout_devices": logout_devices}
     requests.post(url, headers=HEADERS, json=payload)
@@ -150,7 +150,15 @@ def menu_delete_local_media():
     main()
 
 
+def menu_get_version():
+    url = config.MATRIX_URL + ENDPOINTS['GET_VERSION']
+    r = requests.get(url, headers=HEADERS)
+    logger.info(r.json())
+    main()
+
+
 NAVIGATION = {
+    0: menu_get_version,
     1: menu_create_user,
     2: menu_list_all_users,
     3: menu_deactivate_users,
@@ -161,6 +169,7 @@ NAVIGATION = {
 
 
 def main():
+    print('(0) Get version')
     print('(1) Create a new user')
     print('(2) List all users')
     print('(3) Delete users')
