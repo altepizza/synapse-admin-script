@@ -4,6 +4,7 @@ import requests
 import string
 import time
 from loguru import logger
+from getpass import getpass
 
 HEADERS = {'Authorization': f'Bearer {config.TOKEN}'}
 
@@ -133,15 +134,17 @@ def menu_reset_user_password():
         print(f'({idx}) {user["name"]}')
     print()
     idx = int(input('Choose a number: '))
+    custom_password = getpass(prompt='Password: ', stream=None)
     logout_devices = input('Logout all devices [y/N]?')
     user_id = users[idx]['name']
-    logger.info(f'New password: {password}')
+    if not custom_password:
+        logger.info(f'New password: {password}')
+    else:
+        password = custom_password
     if logout_devices.lower() == 'y':
         reset_password_for(user_id, password, logout_devices=True)
-        pass
     else:
         reset_password_for(user_id, password, logout_devices=False)
-        pass
     main()
 
 
